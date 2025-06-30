@@ -1,4 +1,4 @@
-name: Run Scraper Twice Daily
+name: Deploy to GitHub Pages
 
 on:
   schedule:
@@ -6,11 +6,20 @@ on:
     - cron: '0 3 * * *'    # 오후 12시 (KST, UTC+9)
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
-  run-scraper:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -19,10 +28,12 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run scraper
         run: python run_all_scrapers.py
-      - name: Commit and push changes
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add .
-          git commit -m "자동 스크래핑: $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
-          git push 
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 
