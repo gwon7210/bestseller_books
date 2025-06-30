@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>출판사 베스트셀러 대시보드</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #222;
+    }
+    .dashboard-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .category-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    .category-button {
+      padding: 10px 20px;
+      background-color: #3498db;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .category-button:hover {
+      background-color: #2980b9;
+    }
+    .category-button.active {
+      background-color: #2c3e50;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .publisher {
+      background-color: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .publisher h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #333;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+    .category-label {
+      font-size: 0.8em;
+      color: #666;
+      margin-left: 5px;
+    }
+    .book {
+      display: flex;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+    .book img {
+      width: 50px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .book-details {
+      font-size: 13px;
+    }
+    .book-title {
+      font-weight: bold;
+      margin-bottom: 3px;
+      color: #333;
+    }
+    .book-title a {
+      color: #333;
+      text-decoration: none;
+    }
+    .book-title a:hover {
+      color: #0066cc;
+      text-decoration: underline;
+    }
+    .book-meta {
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 8px;
+    }
+    .release-date {
+      color: #e67e22;
+      font-weight: bold;
+    }
+    .new-badge {
+      background-color: #e74c3c;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.8em;
+      margin-left: 8px;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>출판사 주간 베스트셀러 대시보드</h1>
+  <div class="dashboard-wrapper">
+    <div class="category-buttons" id="category-buttons"></div>
+    <div class="dashboard" id="dashboard">
+      <div class="loading">카테고리를 선택해주세요.</div>
+    </div>
+  </div>
+
+  <script>
+    const categories = ['경제경영', '에세이', '건강취미'];
+    const categoryMap = {
+      '경제경영': 'economics_data',
+      '에세이': 'essay_data',
+      '건강취미': 'hobbyHealth_data'
+    };
+
+    function renderButtons(defaultCategory) {
+      const container = document.getElementById('category-buttons');
+      container.innerHTML = '';
+      categories.forEach(category => {
+        const btn = document.createElement('button');
+        btn.className = 'category-button';
+        btn.textContent = category;
+        if (category === defaultCategory) btn.classList.add('active');
+        btn.onclick = () => {
+          document.querySelectorAll('.category-button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          loadData(category);
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    async function loadData(category) {
+      const dashboard = document.getElementById('dashboard');
+      dashboard.innerHTML = '<div class="loading">데이터를 불러오는 중...</div>';
+      const dir = categoryMap[category];
+      try {
+        const publishers = ['aladin', 'kyobo', 'yes24', 'ypbooks'];
+        const data = {};
+        for (const pub of publishers) {
+          const response = await fetch(`${dir}/${pub}_${dir.split('_')[0]}.json`);
+          data[pub] = await response.json();
+        }
+        renderDashboard(data, category);
+      } catch (err) {
+        dashboard.innerHTML = '<div class="loading">데이터 로딩 오류가 발생했습니다.</div>';
+      }
+    }
+
+    function renderDashboard(data, category) {
+      const dashboard = document.getElementById('dashboard');
+      dashboard.innerHTML = '';
+
+      for (const pub in data) {
+        const books = data[pub];
+        const pubDiv = document.createElement('div');
+        pubDiv.className = 'publisher';
+
+        const title = document.createElement('h3');
+
+        let name = '';
+        let label = category;
+
+        if (pub === 'aladin') name = '알라딘';
+        else if (pub === 'kyobo') name = '교보문고';
+        else if (pub === 'yes24') name = '예스24';
+        else if (pub === 'ypbooks') name = '영풍문고';
+
+        // 하드코딩된 괄호 표기
+        if (category === '건강취미') {
+          if (pub === 'aladin') label = '건강/취미';
+          else if (pub === 'kyobo') label = '건강';
+          else if (pub === 'yes24') label = '건강 취미';
+          else if (pub === 'ypbooks') label = '여성,취미';
+        } else if (category === '에세이') {
+          if (pub === 'ypbooks') label = '비소설';
+          else label = '에세이';
+        }
+
+        title.innerHTML = `${name}<span class="category-label">(${label})</span>`;
+        pubDiv.appendChild(title);
+
+        books.forEach(book => {
+          const bookDiv = document.createElement('div');
+          bookDiv.className = 'book';
+
+          const img = document.createElement('img');
+          img.src = book.image || book.img || book.image_url || '';
+          img.alt = book.title || '표지';
+
+          const details = document.createElement('div');
+          details.className = 'book-details';
+
+          const bookTitle = document.createElement('div');
+          bookTitle.className = 'book-title';
+
+          if (book.detail_url || book.book_link) {
+            const a = document.createElement('a');
+            a.href = book.detail_url || book.book_link;
+            a.target = '_blank';
+            a.textContent = book.title;
+            bookTitle.appendChild(a);
+          } else {
+            bookTitle.textContent = book.title;
+          }
+
+          const dateStr = book.release_date || '';
+          const match = dateStr.match(/(\d{4})년\s*(\d{1,2})월/);
+          if (match) {
+            const release = new Date(match[1], match[2] - 1, 1);
+            const now = new Date();
+            const diff = (now - release) / (1000 * 60 * 60 * 24);
+            if (diff <= 5) {
+              const badge = document.createElement('span');
+              badge.className = 'new-badge';
+              badge.textContent = 'NEW';
+              bookTitle.appendChild(badge);
+            }
+          }
+
+          const meta = document.createElement('div');
+          meta.className = 'book-meta';
+          const releaseInfo = dateStr ? `<span class="release-date">${dateStr}</span> | ` : '';
+          const author = book.author || '저자 미상';
+          const price = book.price || book.sales_point || book.sales_index || '가격 정보 없음';
+
+          meta.innerHTML = `${releaseInfo}${author} | ${price}`;
+
+          details.appendChild(bookTitle);
+          details.appendChild(meta);
+          bookDiv.appendChild(img);
+          bookDiv.appendChild(details);
+          pubDiv.appendChild(bookDiv);
+        });
+
+        dashboard.appendChild(pubDiv);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const defaultCategory = '경제경영';
+      renderButtons(defaultCategory);
+      loadData(defaultCategory);
+    });
+  </script>
+</body>
+</html>
