@@ -1,0 +1,28 @@
+name: Run Scraper Twice Daily
+
+on:
+  schedule:
+    - cron: '0 21 * * *'   # 오전 6시 (KST, UTC+9)
+    - cron: '0 3 * * *'    # 오후 12시 (KST, UTC+9)
+  workflow_dispatch:
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run scraper
+        run: python run_all_scrapers.py
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m "자동 스크래핑: $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+          git push 
