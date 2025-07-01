@@ -4,6 +4,7 @@ on:
   schedule:
     - cron: '0 21 * * *'   # 오전 6시 (KST, UTC+9)
     - cron: '0 3 * * *'    # 오후 12시 (KST, UTC+9)
+    - cron: '31 3 * * *'   # 오후 12시 31분 (KST, UTC+9)
   workflow_dispatch:
 
 permissions:
