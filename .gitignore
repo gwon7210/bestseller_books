@@ -1,4 +1,0 @@
-# *_data 디렉토리 내의 모든 .json 파일 무시
-economics_data/*.json
-essay_data/*.json
-hobbyHealth_data/*.json
