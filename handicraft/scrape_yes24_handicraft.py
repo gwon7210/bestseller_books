@@ -95,10 +95,10 @@ def scrape_yes24_bestsellers():
     except Exception as e:
         print(f"페이지 처리 중 오류 발생: {e}")
 
-    # coloringBooks_data 폴더에 저장
-    data_dir = "../coloringBooks_data"
+    # handicraft_data 폴더에 저장
+    data_dir = "../handicraft_data"
     os.makedirs(data_dir, exist_ok=True)
-    filename = os.path.join(data_dir, "yes24_coloringBooks .json")
+    filename = os.path.join(data_dir, "yes24_handicraft.json")
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(books, f, ensure_ascii=False, indent=2)
 
