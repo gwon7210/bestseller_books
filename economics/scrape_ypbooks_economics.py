@@ -10,15 +10,31 @@ now = datetime.now()
 year = now.year
 month = now.month
 
-# 1. week 리스트 조회
+# 1. week 리스트 조회 (첫 번째 시도)
 week_url = f"https://www.ypbooks.co.kr/back_shop/base_shop/api/v1/best-seller/bestsellerDateList?year={year}&month={month}"
+print(f"week_url: {week_url}")
+
 week_response = requests.get(week_url)
 week_data = week_response.json()
 
 # 2. 가장 큰 week 값 찾기
 week_list = week_data.get("data", [])
 if not week_list:
-    raise Exception("해당 월의 week 정보를 찾을 수 없습니다.")
+    # 한 번만 month 값을 -1 해서 다시 시도
+    month -= 1
+    if month == 0:
+        month = 12
+        year -= 1
+    
+    week_url = f"https://www.ypbooks.co.kr/back_shop/base_shop/api/v1/best-seller/bestsellerDateList?year={year}&month={month}"
+    print(f"재시도 week_url: {week_url}")
+    
+    week_response = requests.get(week_url)
+    week_data = week_response.json()
+    
+    week_list = week_data.get("data", [])
+    if not week_list:
+        raise Exception("해당 월의 week 정보를 찾을 수 없습니다.")
 max_week = max(item["week"] for item in week_list)
 
 # 3. 책 리스트 API 호출
