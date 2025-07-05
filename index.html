@@ -1,4 +1,4 @@
-<div style="font-size:12px; color:gray;">최근 업데이트: 2025-06-30 22:06:54</div>
+<div style="font-size:12px; color:gray;">최근 업데이트: 2025-07-05 14:14:46</div>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -126,11 +126,14 @@
   </div>
 
   <script>
-    const categories = ['경제경영', '에세이', '건강취미'];
+    const categories = ['경제경영', '에세이', '건강취미', '컬러링북', '공예(뜨개)', '웹툰단행본'];
     const categoryMap = {
       '경제경영': 'economics_data',
       '에세이': 'essay_data',
-      '건강취미': 'hobbyHealth_data'
+      '건강취미': 'hobbyHealth_data',
+      '컬러링북': 'coloringBooks_data',
+      '공예(뜨개)': 'handicraft_data',
+      '웹툰단행본': 'webtoons_data'
     };
 
     function renderButtons(defaultCategory) {
@@ -157,11 +160,23 @@
       try {
         const publishers = ['aladin', 'kyobo', 'yes24', 'ypbooks'];
         const data = {};
+        
         for (const pub of publishers) {
-          const response = await fetch(`${dir}/${pub}_${dir.split('_')[0]}.json`);
-          data[pub] = await response.json();
+          try {
+            const response = await fetch(`${dir}/${pub}_${dir.split('_')[0]}.json`);
+            if (response.ok) {
+              data[pub] = await response.json();
+            }
+          } catch (err) {
+            console.log(`${pub}의 ${category} 데이터를 불러올 수 없습니다.`);
+          }
         }
-        renderDashboard(data, category);
+        
+        if (Object.keys(data).length === 0) {
+          dashboard.innerHTML = '<div class="loading">해당 카테고리의 데이터가 없습니다.</div>';
+        } else {
+          renderDashboard(data, category);
+        }
       } catch (err) {
         dashboard.innerHTML = '<div class="loading">데이터 로딩 오류가 발생했습니다.</div>';
       }
@@ -195,6 +210,21 @@
         } else if (category === '에세이') {
           if (pub === 'ypbooks') label = '비소설';
           else label = '에세이';
+        } else if (category === '컬러링북') {
+          if (pub === 'aladin') label = '예술/대중문화 > 컬러링북';
+          else if (pub === 'kyobo') label = '예술/대중문화 > 디자인/색채 > 컬러링북';
+          else if (pub === 'yes24') label = '예술 > 미술 > 컬러링';
+          else label = '컬러링북';
+        } else if (category === '공예(뜨개)') {
+          if (pub === 'aladin') label = '건강/취미 > 공예';
+          else if (pub === 'kyobo') label = '취미/실용/스포츠 > 생활공예/DIY';
+          else if (pub === 'yes24') label = '건강취미 > 공예';
+          else label = '공예';
+        } else if (category === '웹툰단행본') {
+          if (pub === 'aladin') label = '만화 > 인터넷연재만화';
+          else if (pub === 'kyobo') label = '만화 > 웹툰/카툰에세이';
+          else if (pub === 'yes24') label = '만화/라이트노벨 > 웹툰';
+          else label = '웹툰';
         }
 
         title.innerHTML = `${name}<span class="category-label">(${label})</span>`;

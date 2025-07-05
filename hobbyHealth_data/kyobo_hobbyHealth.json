@@ -9,8 +9,8 @@
     "rank": 1,
     "category": "건강",
     "discount_rate": 10,
-    "rating": 9.7,
-    "review_count": 17,
+    "rating": 9.67,
+    "review_count": 45,
     "book_link": "https://product.kyobobook.co.kr/detail/S000216803140"
   },
   {
@@ -24,22 +24,8 @@
     "category": "건강",
     "discount_rate": 10,
     "rating": 9.86,
-    "review_count": 42,
+    "review_count": 43,
     "book_link": "https://product.kyobobook.co.kr/detail/S000215747470"
-  },
-  {
-    "img": "https://contents.kyobobook.co.kr/sih/fit-in/200x0/pdt/9791172540586.jpg",
-    "title": "식탐 해방",
-    "author": "저드슨 브루어",
-    "publisher": "푸른숲",
-    "price": "19800",
-    "release_date": "2025년 05월",
-    "rank": 3,
-    "category": "건강",
-    "discount_rate": 10,
-    "rating": 10.0,
-    "review_count": 25,
-    "book_link": "https://product.kyobobook.co.kr/detail/S000216446457"
   },
   {
     "img": "https://contents.kyobobook.co.kr/sih/fit-in/200x0/pdt/9791139723700.jpg",
@@ -48,12 +34,26 @@
     "publisher": "현대지성",
     "price": "18000",
     "release_date": "2025년 06월",
+    "rank": 3,
+    "category": "건강",
+    "discount_rate": 10,
+    "rating": 9.46,
+    "review_count": 31,
+    "book_link": "https://product.kyobobook.co.kr/detail/S000216580181"
+  },
+  {
+    "img": "https://contents.kyobobook.co.kr/sih/fit-in/200x0/pdt/9791172540586.jpg",
+    "title": "식탐 해방",
+    "author": "저드슨 브루어",
+    "publisher": "푸른숲",
+    "price": "19800",
+    "release_date": "2025년 05월",
     "rank": 4,
     "category": "건강",
     "discount_rate": 10,
-    "rating": 9.92,
-    "review_count": 26,
-    "book_link": "https://product.kyobobook.co.kr/detail/S000216580181"
+    "rating": 10.0,
+    "review_count": 25,
+    "book_link": "https://product.kyobobook.co.kr/detail/S000216446457"
   },
   {
     "img": "https://contents.kyobobook.co.kr/sih/fit-in/200x0/pdt/9791197437311.jpg",
@@ -66,7 +66,7 @@
     "category": "건강",
     "discount_rate": 10,
     "rating": 9.85,
-    "review_count": 450,
+    "review_count": 451,
     "book_link": "https://product.kyobobook.co.kr/detail/S000001986541"
   },
   {
@@ -80,8 +80,22 @@
     "category": "건강",
     "discount_rate": 10,
     "rating": 9.84,
-    "review_count": 162,
+    "review_count": 165,
     "book_link": "https://product.kyobobook.co.kr/detail/S000213848131"
+  },
+  {
+    "img": "https://contents.kyobobook.co.kr/sih/fit-in/200x0/pdt/9791194725169.jpg",
+    "title": "느리게 나이 드는 습관(리커버:K)",
+    "author": "정희원",
+    "publisher": "한빛라이프",
+    "price": "18000",
+    "release_date": "2025년 07월",
+    "rank": 7,
+    "category": "건강",
+    "discount_rate": 10,
+    "rating": 0.0,
+    "review_count": 0,
+    "book_link": "https://product.kyobobook.co.kr/detail/S000216903699"
   },
   {
     "img": "https://contents.kyobobook.co.kr/sih/fit-in/200x0/pdt/9791197437304.jpg",
@@ -90,11 +104,11 @@
     "publisher": "언탱글링",
     "price": "18500",
     "release_date": "2021년 04월",
-    "rank": 7,
+    "rank": 8,
     "category": "건강",
     "discount_rate": 10,
     "rating": 9.84,
-    "review_count": 339,
+    "review_count": 340,
     "book_link": "https://product.kyobobook.co.kr/detail/S000001986540"
   },
   {
@@ -104,39 +118,25 @@
     "publisher": "웅진지식하우스",
     "price": "18500",
     "release_date": "2024년 06월",
-    "rank": 8,
-    "category": "건강",
-    "discount_rate": 10,
-    "rating": 9.87,
-    "review_count": 135,
-    "book_link": "https://product.kyobobook.co.kr/detail/S000213667191"
-  },
-  {
-    "img": "https://contents.kyobobook.co.kr/sih/fit-in/200x0/pdt/9788947501545.jpg",
-    "title": "굿 에너지",
-    "author": "케이시 민스 외",
-    "publisher": "한국경제신문",
-    "price": "25000",
-    "release_date": "2025년 04월",
     "rank": 9,
     "category": "건강",
     "discount_rate": 10,
-    "rating": 9.97,
-    "review_count": 92,
-    "book_link": "https://product.kyobobook.co.kr/detail/S000216297866"
+    "rating": 9.87,
+    "review_count": 136,
+    "book_link": "https://product.kyobobook.co.kr/detail/S000213667191"
   },
   {
-    "img": "https://contents.kyobobook.co.kr/sih/fit-in/200x0/pdt/9791198553317.jpg",
-    "title": "내 몸 혁명",
-    "author": "박용우",
-    "publisher": "루미너스",
+    "img": "https://contents.kyobobook.co.kr/sih/fit-in/200x0/pdt/9791196834005.jpg",
+    "title": "백년운동",
+    "author": "정선근",
+    "publisher": "아티잔",
     "price": "19500",
-    "release_date": "2024년 01월",
+    "release_date": "2019년 10월",
     "rank": 10,
     "category": "건강",
     "discount_rate": 10,
-    "rating": 9.6,
-    "review_count": 552,
-    "book_link": "https://product.kyobobook.co.kr/detail/S000211741146"
+    "rating": 9.79,
+    "review_count": 519,
+    "book_link": "https://product.kyobobook.co.kr/detail/S000001981146"
   }
 ]
