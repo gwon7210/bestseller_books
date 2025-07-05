@@ -1,6 +1,7 @@
 import subprocess
 import os
 from datetime import datetime
+import pytz
 
 scripts = [
     "essay/scrape_aladin_essay.py",
@@ -15,6 +16,12 @@ scripts = [
     "economics/scrape_kyobo_economics.py",
     "economics/scrape_yes24_economics.py",
     "economics/scrape_ypbooks_economics.py",
+    "coloringBooks/scrape_aladin_coloringBooks.py",
+    "coloringBooks/scrape_yes24_coloringBooks.py",
+    "handicraft/scrape_aladin_handicraft.py",
+    "handicraft/scrape_yes24_handicraft.py",
+    "webtoons/scrape_aladin_webtoons.py",
+    "webtoons/scrape_yes24_webtoons.py",
 ]
 
 for script in scripts:
@@ -41,7 +48,8 @@ def update_index_html():
         print("index.html 파일이 없습니다.")
         return
 
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    kst = pytz.timezone("Asia/Seoul")
+    now = datetime.now(kst).strftime("%Y-%m-%d %H:%M:%S")
     update_line = (
         f'<div style="font-size:12px; color:gray;">최근 업데이트: {now}</div>\n'
     )
