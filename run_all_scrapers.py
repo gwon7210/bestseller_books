@@ -1,41 +1,96 @@
 import subprocess
-import os
 from datetime import datetime
 import pytz
+import os
 
-scripts = [
-    "essay/scrape_aladin_essay.py",
-    "essay/scrape_kyobo_essay.py",
-    "essay/scrape_yes24_essay.py",
-    "essay/scrape_ypbooks_essay.py",
-    "hobbyHealth/scrape_aladin_hobbyHealth.py",
-    "hobbyHealth/scrape_kyobo_hobbyHealth.py",
-    "hobbyHealth/scrape_yes24_hobbyHealth.py",
-    "hobbyHealth/scrape_ypbooks_hobbyHealth.py",
-    "economics/scrape_aladin_economics.py",
-    "economics/scrape_kyobo_economics.py",
-    "economics/scrape_yes24_economics.py",
-    "economics/scrape_ypbooks_economics.py",
-    "coloringBooks/scrape_aladin_coloringBooks.py",
-    "coloringBooks/scrape_yes24_coloringBooks.py",
-    "handicraft/scrape_aladin_handicraft.py",
-    "handicraft/scrape_yes24_handicraft.py",
-    "webtoons/scrape_aladin_webtoons.py",
-    "webtoons/scrape_yes24_webtoons.py",
+# --- 알라딘 카테고리 목록: (카테고리이름, CID) ---
+aladin_categories = [
+    ("economics", "170"),
+    ("essay", "55889"),
+    ("hobbyHealth", "55890"),
+    ("coloringBooks", "114988"),
+    ("handicraft", "53532"),
+    ("webtoons", "7443"),
 ]
 
-for script in scripts:
-    print(f"\n🚀 실행 중: {script}")
+# --- 교보문고 카테고리 목록: (카테고리이름, clst_code) ---
+kyobo_categories = [
+    ("economics", "K"),
+    ("essay", "C"),
+    ("hobbyHealth", "L"),
+]
+
+# --- YES24 카테고리 목록: (카테고리이름, category_number) ---
+yes24_categories = [
+    ("economics", "001001025"),
+    ("essay", "001001047"),
+    ("hobbyHealth", "001001011"),
+    ("coloringBooks", "001001007003011"),
+    ("handicraft", "001001011016"),
+    ("webtoons", "001001008020"),
+]
+
+# --- 영풍문고 카테고리 목록: (카테고리이름, categoryBestCd) ---
+ypbooks_categories = [
+    ("economics", "A006"),
+    ("essay", "A004"),
+    ("hobbyHealth", "A011"),
+]
+
+# --- 알라딘 실행 ---
+print("\n========== 🛒 알라딘 스크래핑 시작 ==========")
+for category_name, category_id in aladin_categories:
+    print(f"\n🚀 실행 중: {category_name} (CID={category_id})")
     try:
-        script_dir = os.path.dirname(script) or "."
         subprocess.run(
-            ["python", os.path.basename(script)],
-            cwd=script_dir,  # ✅ 해당 디렉토리로 이동해서 실행
+            ["python", "scrapers/aladin_scraper.py", category_name, category_id],
             check=True,
         )
-        print(f"✅ 완료: {script}")
+        print(f"✅ 완료: {category_name}")
     except subprocess.CalledProcessError as e:
-        print(f"❌ 오류 발생: {script}")
+        print(f"❌ 오류 발생: {category_name}")
+        print(e)
+
+# --- 교보문고 실행 ---
+print("\n========== 📚 교보문고 스크래핑 시작 ==========")
+for category_name, clst_code in kyobo_categories:
+    print(f"\n🚀 실행 중: {category_name} (코드={clst_code})")
+    try:
+        subprocess.run(
+            ["python", "scrapers/kyobo_scraper.py", category_name, clst_code],
+            check=True,
+        )
+        print(f"✅ 완료: {category_name}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ 오류 발생: {category_name}")
+        print(e)
+
+# --- YES24 실행 ---
+print("\n========== 🧾 YES24 스크래핑 시작 ==========")
+for category_name, category_number in yes24_categories:
+    print(f"\n🚀 실행 중: {category_name} (카테고리 번호={category_number})")
+    try:
+        subprocess.run(
+            ["python", "scrapers/yes24_scraper.py", category_name, category_number],
+            check=True,
+        )
+        print(f"✅ 완료: {category_name}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ 오류 발생: {category_name}")
+        print(e)
+
+# --- 영풍문고 실행 ---
+print("\n========== 🟩 영풍문고 스크래핑 시작 ==========")
+for category_name, category_code in ypbooks_categories:
+    print(f"\n🚀 실행 중: {category_name} (categoryBestCd={category_code})")
+    try:
+        subprocess.run(
+            ["python", "scrapers/ypbooks_scraper.py", category_name, category_code],
+            check=True,
+        )
+        print(f"✅ 완료: {category_name}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ 오류 발생: {category_name}")
         print(e)
 
 
@@ -62,6 +117,7 @@ def update_index_html():
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.writelines(lines)
+    print("📅 index.html 최근 업데이트 시간 갱신 완료")
 
 
 update_index_html()

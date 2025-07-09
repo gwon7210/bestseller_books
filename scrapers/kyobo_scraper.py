@@ -2,10 +2,10 @@ import requests
 import json
 import time
 import os
+import sys
 
 
-# 경제 경영
-def scrape_kyobo_bestsellers():
+def scrape_kyobo_bestsellers(category_name: str, clst_code: str):
     books = []
 
     headers = {
@@ -17,10 +17,10 @@ def scrape_kyobo_bestsellers():
     }
 
     url = "https://store.kyobobook.co.kr/api/gw/best/best-seller/total"
-    params = {"page": 1, "per": 10, "period": "002", "bsslBksClstCode": "K"}
+    params = {"page": 1, "per": 10, "period": "002", "bsslBksClstCode": clst_code}
 
     try:
-        print("교보문고 베스트셀러 데이터 수집을 시작합니다...")
+        print(f"📦 교보문고 '{category_name}' 베스트셀러 수집 시작...")
         response = requests.get(url, headers=headers, params=params)
         response.raise_for_status()
         data = response.json()
@@ -54,39 +54,48 @@ def scrape_kyobo_bestsellers():
                     }
 
                     books.append(book_info)
-                    print(f"수집 완료: {book_info['rank']}위 - {book_info['title']}")
-
+                    print(f"📚 수집 완료: {book_info['rank']}위 - {book_info['title']}")
                     time.sleep(0.1)  # 과도한 요청 방지
 
                 except Exception as e:
-                    print(f"개별 도서 처리 중 오류 발생: {e}")
+                    print(f"⚠️ 개별 도서 처리 중 오류: {e}")
                     continue
 
-            print(f"\n총 {len(books)}개의 도서 정보를 수집했습니다.")
+            print(f"\n✅ 총 {len(books)}권 수집 완료")
 
         else:
-            print(f"API 응답 오류: {data.get('resultMessage', '알 수 없는 오류')}")
+            print(f"❌ API 응답 오류: {data.get('resultMessage', '알 수 없는 오류')}")
 
     except requests.exceptions.RequestException as e:
-        print(f"네트워크 요청 중 오류 발생: {e}")
+        print(f"❌ 네트워크 오류: {e}")
     except json.JSONDecodeError as e:
-        print(f"JSON 파싱 중 오류 발생: {e}")
+        print(f"❌ JSON 파싱 오류: {e}")
     except Exception as e:
-        print(f"예상치 못한 오류 발생: {e}")
+        print(f"❌ 예외 발생: {e}")
 
     try:
-        # economics_data 폴더에 저장
-        data_dir = "../economics_data"
+        # 프로젝트 루트 기준 경로 설정
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        data_dir = os.path.join(project_root, f"{category_name}_data")
         os.makedirs(data_dir, exist_ok=True)
-        filename = os.path.join(data_dir, "kyobo_economics.json")
+        filename = os.path.join(data_dir, f"kyobo_{category_name}.json")
+
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(books, f, ensure_ascii=False, indent=2)
-        print(f"데이터가 {filename} 파일에 저장되었습니다.")
+        print(f"📁 저장 완료: {filename}")
     except Exception as e:
-        print(f"파일 저장 중 오류 발생: {e}")
+        print(f"❌ 파일 저장 중 오류: {e}")
 
     return books
 
 
 if __name__ == "__main__":
-    scrape_kyobo_bestsellers()
+    if len(sys.argv) != 3:
+        print("사용법: python kyobo_scraper.py [category_name] [clst_code]")
+        print("예시:  python kyobo_scraper.py economics K")
+        sys.exit(1)
+
+    category_name = sys.argv[1]
+    clst_code = sys.argv[2]
+
+    scrape_kyobo_bestsellers(category_name, clst_code)
