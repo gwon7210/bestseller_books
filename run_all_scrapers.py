@@ -20,6 +20,13 @@ kyobo_categories = [
     ("hobbyHealth", "L"),
 ]
 
+# --- 교보문고 카테고리별 베스트셀러 목록: (카테고리이름, clst_code) ---
+kyobo_category_codes = [
+    ("handicraft", "1103"),  # 취미/실용/스포츠 > 생활공예/DIY
+    ("webtoons", "4724"),  # 만화 > 웹툰/카툰에세이
+    ("coloringBooks", "230706"),  # 예술/대중문화 > 디자인/색채 > 컬러링북
+]
+
 # --- YES24 카테고리 목록: (카테고리이름, category_number) ---
 yes24_categories = [
     ("economics", "001001025"),
@@ -58,6 +65,20 @@ for category_name, clst_code in kyobo_categories:
     try:
         subprocess.run(
             ["python", "scrapers/kyobo_scraper.py", category_name, clst_code],
+            check=True,
+        )
+        print(f"✅ 완료: {category_name}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ 오류 발생: {category_name}")
+        print(e)
+
+# --- 교보문고 카테고리별 베스트셀러 실행 ---
+print("\n========== 📚 교보문고 카테고리별 베스트셀러 스크래핑 시작 ==========")
+for category_name, clst_code in kyobo_category_codes:
+    print(f"\n🚀 실행 중: {category_name} (코드={clst_code})")
+    try:
+        subprocess.run(
+            ["python", "scrapers/kyobo_category_scraper.py", category_name, clst_code],
             check=True,
         )
         print(f"✅ 완료: {category_name}")
