@@ -27,6 +27,46 @@ def scrape_kyobo_bestsellers(category_name: str, clst_code: str):
 
         if data.get("statusCode") == 200 and "data" in data:
             bestseller_list = data["data"].get("bestSeller", [])
+            print(f"📊 API 응답 구조: statusCode={data.get('statusCode')}, data 키 존재={('data' in data)}, bestSeller 개수={len(bestseller_list)}")
+
+            for book in bestseller_list:
+                try:
+                    release_date = book.get("rlseDate", "")
+                    if release_date and len(release_date) == 8:
+                        year = release_date[:4]
+                        month = release_date[4:6]
+                        formatted_date = f"{year}년 {month}월"
+                    else:
+                        formatted_date = "정보 없음"
+
+                    book_info = {
+                        "img": f"https://contents.kyobobook.co.kr/sih/fit-in/200x0/pdt/{book.get('cmdtCode', '')}.jpg",
+                        "title": book.get("cmdtName", "제목 없음"),
+                        "author": book.get("chrcName", "저자 정보 없음"),
+                        "publisher": book.get("pbcmName", "출판사 정보 없음"),
+                        "price": str(int(book.get("price", 0))),
+                        "release_date": formatted_date,
+                        "rank": book.get("prstRnkn", 0),
+                        "category": book.get("saleCmdtClstName", "분류 없음"),
+                        "discount_rate": book.get("dscnRate", 0),
+                        "rating": book.get("buyRevwRvgr", 0.0),
+                        "review_count": book.get("buyRevwNumc", 0),
+                        "book_link": f"https://product.kyobobook.co.kr/detail/{book.get('saleCmdtid', '')}",
+                    }
+
+                    books.append(book_info)
+                    print(f"📚 수집 완료: {book_info['rank']}위 - {book_info['title']}")
+                    time.sleep(0.1)  # 과도한 요청 방지
+
+                except Exception as e:
+                    print(f"⚠️ 개별 도서 처리 중 오류: {e}")
+                    continue
+
+            print(f"\n✅ 총 {len(books)}권 수집 완료")
+
+        elif "bestSeller" in data:
+            bestseller_list = data["bestSeller"]
+            print(f"📊 API 응답 구조: bestSeller 키 직접 접근, 개수={len(bestseller_list)}")
 
             for book in bestseller_list:
                 try:
@@ -65,6 +105,8 @@ def scrape_kyobo_bestsellers(category_name: str, clst_code: str):
 
         else:
             print(f"❌ API 응답 오류: {data.get('resultMessage', '알 수 없는 오류')}")
+            print(f"📄 전체 응답 내용: {json.dumps(data, indent=2, ensure_ascii=False)}")
+            print(f"🔍 응답 구조 분석: statusCode={data.get('statusCode')}, data 키 존재={('data' in data)}, bestSeller 키 존재={('bestSeller' in data)}")
 
     except requests.exceptions.RequestException as e:
         print(f"❌ 네트워크 오류: {e}")
