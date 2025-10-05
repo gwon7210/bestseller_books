@@ -43,15 +43,39 @@
       background-color: #2c3e50;
     }
     .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      white-space: nowrap;
+      padding-bottom: 10px;
+      scrollbar-gutter: stable;
+      scrollbar-color: #9aa7c5 #edf1f7;
+      scrollbar-width: thin;
+    }
+    .dashboard::-webkit-scrollbar {
+      height: 12px;
+    }
+    .dashboard::-webkit-scrollbar-track {
+      background: #edf1f7;
+    }
+    .dashboard::-webkit-scrollbar-thumb {
+      background-color: #9aa7c5;
+      border-radius: 6px;
+      border: 2px solid #edf1f7;
+    }
+    .dashboard::-webkit-scrollbar-thumb:hover {
+      background-color: #6c7aa3;
     }
     .publisher {
       background-color: white;
       border-radius: 10px;
-      padding: 15px;
+      padding: 20px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: inline-block;
+      vertical-align: top;
+      margin-right: 20px;
+      margin-bottom: 15px;
+      white-space: normal;
+      min-width: 320px;
     }
     .publisher h3 {
       font-size: 18px;
@@ -96,6 +120,31 @@
       font-size: 0.9em;
       color: #666;
       margin-top: 8px;
+    }
+    .category-columns {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      flex-wrap: nowrap;
+      align-items: flex-start;
+      margin-top: 5px;
+    }
+    .category-column {
+      flex: 1 1 220px;
+      min-width: 200px;
+      background-color: #f5f7fb;
+      border: 1px solid #eef1f6;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .category-column-title {
+      font-weight: bold;
+      font-size: 14px;
+      color: #2c3e50;
+      margin-bottom: 4px;
     }
     .release-date {
       color: #e67e22;
@@ -208,72 +257,80 @@
       }
     }
 
+    function getPublisherName(pub) {
+      if (pub === 'aladin') return '알라딘';
+      if (pub === 'kyobo') return '교보문고';
+      if (pub === 'yes24') return '예스24';
+      if (pub === 'ypbooks') return '영풍문고';
+      return pub;
+    }
+
+    function getCategoryLabel(pub, category, variant) {
+      if (category === '건강취미') {
+        if (pub === 'aladin') return variant === 'cooking' ? '요리/살림' : '건강/취미';
+        if (pub === 'kyobo') {
+          if (variant === 'homelife') return '가정생활';
+          if (variant === 'sports') return '취미/스포츠';
+          if (variant === 'cooking') return '요리';
+          return '건강';
+        }
+        if (pub === 'yes24') return variant === 'home' ? '가정 살림' : '건강 취미';
+        if (pub === 'ypbooks') {
+          if (variant === 'health') return '건강';
+          if (variant === 'hobbies') return '취미/레저';
+          return '가정/생활/요리';
+        }
+      } else if (category === '에세이') {
+        return pub === 'ypbooks' ? '비소설' : '에세이';
+      } else if (category === '컬러링북') {
+        if (pub === 'aladin') return '예술/대중문화 > 컬러링북';
+        if (pub === 'kyobo') return '예술/대중문화 > 디자인/색채 > 컬러링북';
+        if (pub === 'yes24') return '예술 > 미술 > 컬러링';
+        return '컬러링북';
+      } else if (category === '공예(뜨개)') {
+        if (pub === 'aladin') return '건강/취미 > 공예';
+        if (pub === 'kyobo') return '취미/실용/스포츠 > 생활공예/DIY';
+        if (pub === 'yes24') return '건강취미 > 공예';
+        return '공예';
+      } else if (category === '웹툰단행본') {
+        if (pub === 'aladin') return '만화 > 인터넷연재만화';
+        if (pub === 'kyobo') return '만화 > 웹툰/카툰에세이';
+        if (pub === 'yes24') return '만화/라이트노벨 > 웹툰';
+        return '웹툰';
+      }
+      return category;
+    }
+
     function renderDashboard(data, category) {
       const dashboard = document.getElementById('dashboard');
       dashboard.innerHTML = '';
 
       for (const pub in data) {
         const entries = data[pub];
-        if (!Array.isArray(entries)) continue;
+        if (!Array.isArray(entries) || entries.length === 0) continue;
+
+        const pubDiv = document.createElement('div');
+        pubDiv.className = 'publisher';
+
+        const title = document.createElement('h3');
+        const name = getPublisherName(pub);
+        title.innerHTML = `${name}<span class="category-label">(${category})</span>`;
+        pubDiv.appendChild(title);
+
+        const columnsContainer = document.createElement('div');
+        columnsContainer.className = 'category-columns';
 
         entries.forEach(entry => {
           const books = entry.books;
           if (!Array.isArray(books) || books.length === 0) return;
 
-          const pubDiv = document.createElement('div');
-          pubDiv.className = 'publisher';
+          const column = document.createElement('div');
+          column.className = 'category-column';
 
-          const title = document.createElement('h3');
-
-          let name = '';
-          let label = category;
-
-          if (pub === 'aladin') name = '알라딘';
-          else if (pub === 'kyobo') name = '교보문고';
-          else if (pub === 'yes24') name = '예스24';
-          else if (pub === 'ypbooks') name = '영풍문고';
-
-          // 하드코딩된 괄호 표기
-          if (category === '건강취미') {
-            if (pub === 'aladin') {
-              label = entry.variant === 'cooking' ? '요리/살림' : '건강/취미';
-            } else if (pub === 'kyobo') {
-              if (entry.variant === 'homelife') label = '가정생활';
-              else if (entry.variant === 'sports') label = '취미/스포츠';
-              else if (entry.variant === 'cooking') label = '요리';
-              else label = '건강';
-            } else if (pub === 'yes24') {
-              label = entry.variant === 'home' ? '가정 살림' : '건강 취미';
-            } else if (pub === 'ypbooks') {
-              label =
-                entry.variant === 'health'
-                  ? '건강'
-                  : entry.variant === 'hobbies'
-                  ? '취미/레저'
-                  : '가정/생활/요리';
-            }
-          } else if (category === '에세이') {
-            if (pub === 'ypbooks') label = '비소설';
-            else label = '에세이';
-          } else if (category === '컬러링북') {
-            if (pub === 'aladin') label = '예술/대중문화 > 컬러링북';
-            else if (pub === 'kyobo') label = '예술/대중문화 > 디자인/색채 > 컬러링북';
-            else if (pub === 'yes24') label = '예술 > 미술 > 컬러링';
-            else label = '컬러링북';
-          } else if (category === '공예(뜨개)') {
-            if (pub === 'aladin') label = '건강/취미 > 공예';
-            else if (pub === 'kyobo') label = '취미/실용/스포츠 > 생활공예/DIY';
-            else if (pub === 'yes24') label = '건강취미 > 공예';
-            else label = '공예';
-          } else if (category === '웹툰단행본') {
-            if (pub === 'aladin') label = '만화 > 인터넷연재만화';
-            else if (pub === 'kyobo') label = '만화 > 웹툰/카툰에세이';
-            else if (pub === 'yes24') label = '만화/라이트노벨 > 웹툰';
-            else label = '웹툰';
-          }
-
-          title.innerHTML = `${name}<span class="category-label">(${label})</span>`;
-          pubDiv.appendChild(title);
+          const columnTitle = document.createElement('div');
+          columnTitle.className = 'category-column-title';
+          columnTitle.textContent = getCategoryLabel(pub, category, entry.variant);
+          column.appendChild(columnTitle);
 
           books.forEach(book => {
             const bookDiv = document.createElement('div');
@@ -325,11 +382,18 @@
             details.appendChild(meta);
             bookDiv.appendChild(img);
             bookDiv.appendChild(details);
-            pubDiv.appendChild(bookDiv);
+            column.appendChild(bookDiv);
           });
 
-          dashboard.appendChild(pubDiv);
+          if (column.children.length > 1) {
+            columnsContainer.appendChild(column);
+          }
         });
+
+        if (columnsContainer.children.length > 0) {
+          pubDiv.appendChild(columnsContainer);
+          dashboard.appendChild(pubDiv);
+        }
       }
     }
 
