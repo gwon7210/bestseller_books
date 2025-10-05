@@ -1,4 +1,4 @@
-<div style="font-size:12px; color:gray;">최근 업데이트: 2025-07-12 14:32:32</div>
+<div style="font-size:12px; color:gray;">최근 업데이트: 2025-10-05 19:10:50</div>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -160,22 +160,42 @@
       try {
         const publishers = ['aladin', 'kyobo', 'yes24', 'ypbooks'];
         const data = {};
-        
+
         for (const pub of publishers) {
-          try {
-            const response = await fetch(`${dir}/${pub}_${dir.split('_')[0]}.json`);
-            if (response.ok) {
-              data[pub] = await response.json();
+          const targets = [{ path: `${dir}/${pub}_${dir.split('_')[0]}.json`, variant: 'default' }];
+
+          if (category === '건강취미') {
+            if (pub === 'aladin') {
+              targets.push({ path: 'cooking&home_data/aladin_cooking&home.json', variant: 'cooking' });
+            } else if (pub === 'ypbooks') {
+              targets.push({ path: 'health_data/ypbooks_health.json', variant: 'health' });
+              targets.push({ path: 'hobbies&leisure_data/ypbooks_hobbies&leisure.json', variant: 'hobbies' });
             }
-          } catch (err) {
-            console.log(`${pub}의 ${category} 데이터를 불러올 수 없습니다.`);
+          }
+
+          for (const target of targets) {
+            try {
+              const response = await fetch(target.path);
+              if (response.ok) {
+                const books = await response.json();
+                if (!Array.isArray(books) || books.length === 0) continue;
+                if (!data[pub]) data[pub] = [];
+                data[pub].push({ books, variant: target.variant });
+              }
+            } catch (err) {
+              console.log(`${pub}의 ${category} 데이터를 불러올 수 없습니다. (${target.variant})`);
+            }
           }
         }
-        
-        if (Object.keys(data).length === 0) {
+
+        const available = Object.fromEntries(
+          Object.entries(data).filter(([, entries]) => Array.isArray(entries) && entries.length > 0)
+        );
+
+        if (Object.keys(available).length === 0) {
           dashboard.innerHTML = '<div class="loading">해당 카테고리의 데이터가 없습니다.</div>';
         } else {
-          renderDashboard(data, category);
+          renderDashboard(available, category);
         }
       } catch (err) {
         dashboard.innerHTML = '<div class="loading">데이터 로딩 오류가 발생했습니다.</div>';
@@ -187,103 +207,120 @@
       dashboard.innerHTML = '';
 
       for (const pub in data) {
-        const books = data[pub];
-        const pubDiv = document.createElement('div');
-        pubDiv.className = 'publisher';
+        const entries = data[pub];
+        if (!Array.isArray(entries)) continue;
 
-        const title = document.createElement('h3');
+        entries.forEach(entry => {
+          const books = entry.books;
+          if (!Array.isArray(books) || books.length === 0) return;
 
-        let name = '';
-        let label = category;
+          const pubDiv = document.createElement('div');
+          pubDiv.className = 'publisher';
 
-        if (pub === 'aladin') name = '알라딘';
-        else if (pub === 'kyobo') name = '교보문고';
-        else if (pub === 'yes24') name = '예스24';
-        else if (pub === 'ypbooks') name = '영풍문고';
+          const title = document.createElement('h3');
 
-        // 하드코딩된 괄호 표기
-        if (category === '건강취미') {
-          if (pub === 'aladin') label = '건강/취미';
-          else if (pub === 'kyobo') label = '건강';
-          else if (pub === 'yes24') label = '건강 취미';
-          else if (pub === 'ypbooks') label = '여성,취미';
-        } else if (category === '에세이') {
-          if (pub === 'ypbooks') label = '비소설';
-          else label = '에세이';
-        } else if (category === '컬러링북') {
-          if (pub === 'aladin') label = '예술/대중문화 > 컬러링북';
-          else if (pub === 'kyobo') label = '예술/대중문화 > 디자인/색채 > 컬러링북';
-          else if (pub === 'yes24') label = '예술 > 미술 > 컬러링';
-          else label = '컬러링북';
-        } else if (category === '공예(뜨개)') {
-          if (pub === 'aladin') label = '건강/취미 > 공예';
-          else if (pub === 'kyobo') label = '취미/실용/스포츠 > 생활공예/DIY';
-          else if (pub === 'yes24') label = '건강취미 > 공예';
-          else label = '공예';
-        } else if (category === '웹툰단행본') {
-          if (pub === 'aladin') label = '만화 > 인터넷연재만화';
-          else if (pub === 'kyobo') label = '만화 > 웹툰/카툰에세이';
-          else if (pub === 'yes24') label = '만화/라이트노벨 > 웹툰';
-          else label = '웹툰';
-        }
+          let name = '';
+          let label = category;
 
-        title.innerHTML = `${name}<span class="category-label">(${label})</span>`;
-        pubDiv.appendChild(title);
+          if (pub === 'aladin') name = '알라딘';
+          else if (pub === 'kyobo') name = '교보문고';
+          else if (pub === 'yes24') name = '예스24';
+          else if (pub === 'ypbooks') name = '영풍문고';
 
-        books.forEach(book => {
-          const bookDiv = document.createElement('div');
-          bookDiv.className = 'book';
-
-          const img = document.createElement('img');
-          img.src = book.image || book.img || book.image_url || '';
-          img.alt = book.title || '표지';
-
-          const details = document.createElement('div');
-          details.className = 'book-details';
-
-          const bookTitle = document.createElement('div');
-          bookTitle.className = 'book-title';
-
-          if (book.detail_url || book.book_link) {
-            const a = document.createElement('a');
-            a.href = book.detail_url || book.book_link;
-            a.target = '_blank';
-            a.textContent = book.title;
-            bookTitle.appendChild(a);
-          } else {
-            bookTitle.textContent = book.title;
-          }
-
-          const dateStr = book.release_date || '';
-          const match = dateStr.match(/(\d{4})년\s*(\d{1,2})월/);
-          if (match) {
-            const release = new Date(match[1], match[2] - 1, 1);
-            const now = new Date();
-            const diff = (now - release) / (1000 * 60 * 60 * 24);
-            if (diff <= 5) {
-              const badge = document.createElement('span');
-              badge.className = 'new-badge';
-              badge.textContent = 'NEW';
-              bookTitle.appendChild(badge);
+          // 하드코딩된 괄호 표기
+          if (category === '건강취미') {
+            if (pub === 'aladin') {
+              label = entry.variant === 'cooking' ? '요리/살림' : '건강/취미';
+            } else if (pub === 'kyobo') {
+              label = '건강';
+            } else if (pub === 'yes24') {
+              label = '건강 취미';
+            } else if (pub === 'ypbooks') {
+              label =
+                entry.variant === 'health'
+                  ? '건강'
+                  : entry.variant === 'hobbies'
+                  ? '취미/레저'
+                  : '가정/생활/요리';
             }
+          } else if (category === '에세이') {
+            if (pub === 'ypbooks') label = '비소설';
+            else label = '에세이';
+          } else if (category === '컬러링북') {
+            if (pub === 'aladin') label = '예술/대중문화 > 컬러링북';
+            else if (pub === 'kyobo') label = '예술/대중문화 > 디자인/색채 > 컬러링북';
+            else if (pub === 'yes24') label = '예술 > 미술 > 컬러링';
+            else label = '컬러링북';
+          } else if (category === '공예(뜨개)') {
+            if (pub === 'aladin') label = '건강/취미 > 공예';
+            else if (pub === 'kyobo') label = '취미/실용/스포츠 > 생활공예/DIY';
+            else if (pub === 'yes24') label = '건강취미 > 공예';
+            else label = '공예';
+          } else if (category === '웹툰단행본') {
+            if (pub === 'aladin') label = '만화 > 인터넷연재만화';
+            else if (pub === 'kyobo') label = '만화 > 웹툰/카툰에세이';
+            else if (pub === 'yes24') label = '만화/라이트노벨 > 웹툰';
+            else label = '웹툰';
           }
 
-          const meta = document.createElement('div');
-          meta.className = 'book-meta';
-          const releaseInfo = dateStr ? `<span class="release-date">${dateStr}</span> | ` : '';
-          const author = book.author || '저자 미상';
-          const price = book.price || book.sales_point || book.sales_index || '가격 정보 없음';
+          title.innerHTML = `${name}<span class="category-label">(${label})</span>`;
+          pubDiv.appendChild(title);
 
-          meta.innerHTML = `${releaseInfo}${author} | ${price}`;
+          books.forEach(book => {
+            const bookDiv = document.createElement('div');
+            bookDiv.className = 'book';
 
-          details.appendChild(bookTitle);
-          details.appendChild(meta);
-          bookDiv.appendChild(img);
-          bookDiv.appendChild(details);
-          pubDiv.appendChild(bookDiv);
+            const img = document.createElement('img');
+            img.src = book.image || book.img || book.image_url || '';
+            img.alt = book.title || '표지';
+
+            const details = document.createElement('div');
+            details.className = 'book-details';
+
+            const bookTitle = document.createElement('div');
+            bookTitle.className = 'book-title';
+
+            if (book.detail_url || book.book_link) {
+              const a = document.createElement('a');
+              a.href = book.detail_url || book.book_link;
+              a.target = '_blank';
+              a.textContent = book.title;
+              bookTitle.appendChild(a);
+            } else {
+              bookTitle.textContent = book.title;
+            }
+
+            const dateStr = book.release_date || '';
+            const match = dateStr.match(/(\d{4})년\s*(\d{1,2})월/);
+            if (match) {
+              const release = new Date(match[1], match[2] - 1, 1);
+              const now = new Date();
+              const diff = (now - release) / (1000 * 60 * 60 * 24);
+              if (diff <= 5) {
+                const badge = document.createElement('span');
+                badge.className = 'new-badge';
+                badge.textContent = 'NEW';
+                bookTitle.appendChild(badge);
+              }
+            }
+
+            const meta = document.createElement('div');
+            meta.className = 'book-meta';
+            const releaseInfo = dateStr ? `<span class="release-date">${dateStr}</span> | ` : '';
+            const author = book.author || '저자 미상';
+            const price = book.price || book.sales_point || book.sales_index || '가격 정보 없음';
+
+            meta.innerHTML = `${releaseInfo}${author} | ${price}`;
+
+            details.appendChild(bookTitle);
+            details.appendChild(meta);
+            bookDiv.appendChild(img);
+            bookDiv.appendChild(details);
+            pubDiv.appendChild(bookDiv);
+          });
+
+          dashboard.appendChild(pubDiv);
         });
-
-        dashboard.appendChild(pubDiv);
       }
     }
 
