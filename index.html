@@ -1,4 +1,4 @@
-<div style="font-size:12px; color:gray;">최근 업데이트: 2025-10-05 19:10:50</div>
+<div style="font-size:12px; color:gray;">최근 업데이트: 2025-10-05 19:27:43</div>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -167,6 +167,12 @@
           if (category === '건강취미') {
             if (pub === 'aladin') {
               targets.push({ path: 'cooking&home_data/aladin_cooking&home.json', variant: 'cooking' });
+            } else if (pub === 'kyobo') {
+              targets.push({ path: 'HomeLife_data/kyobo_HomeLife.json', variant: 'homelife' });
+              targets.push({ path: 'hobbies&sports_data/kyobo_hobbies&sports.json', variant: 'sports' });
+              targets.push({ path: 'cooking_data/kyobo_cooking.json', variant: 'cooking' });
+            } else if (pub === 'yes24') {
+              targets.push({ path: 'home&housekeeping_data/yes24_home&housekeeping.json', variant: 'home' });
             } else if (pub === 'ypbooks') {
               targets.push({ path: 'health_data/ypbooks_health.json', variant: 'health' });
               targets.push({ path: 'hobbies&leisure_data/ypbooks_hobbies&leisure.json', variant: 'hobbies' });
@@ -232,9 +238,12 @@
             if (pub === 'aladin') {
               label = entry.variant === 'cooking' ? '요리/살림' : '건강/취미';
             } else if (pub === 'kyobo') {
-              label = '건강';
+              if (entry.variant === 'homelife') label = '가정생활';
+              else if (entry.variant === 'sports') label = '취미/스포츠';
+              else if (entry.variant === 'cooking') label = '요리';
+              else label = '건강';
             } else if (pub === 'yes24') {
-              label = '건강 취미';
+              label = entry.variant === 'home' ? '가정 살림' : '건강 취미';
             } else if (pub === 'ypbooks') {
               label =
                 entry.variant === 'health'
