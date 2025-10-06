@@ -302,6 +302,32 @@
       return category;
     }
 
+    function parseReleaseDate(value) {
+      if (!value) return null;
+      const trimmed = String(value).trim();
+
+      let match = trimmed.match(/(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})?\s*일?/);
+      if (match) {
+        const year = Number(match[1]);
+        const month = Number(match[2]);
+        const day = match[3] ? Number(match[3]) : 1;
+        return new Date(year, month - 1, day);
+      }
+
+      match = trimmed.match(/(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/);
+      if (match) {
+        return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+      }
+
+      match = trimmed.match(/(\d{4})[.\-/](\d{1,2})/);
+      if (match) {
+        return new Date(Number(match[1]), Number(match[2]) - 1, 1);
+      }
+
+      const parsed = new Date(trimmed);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
     function renderDashboard(data, category) {
       const dashboard = document.getElementById('dashboard');
       dashboard.innerHTML = '';
@@ -358,12 +384,11 @@
             }
 
             const dateStr = book.release_date || '';
-            const match = dateStr.match(/(\d{4})년\s*(\d{1,2})월/);
-            if (match) {
-              const release = new Date(match[1], match[2] - 1, 1);
+            const release = parseReleaseDate(dateStr);
+            if (release) {
               const now = new Date();
               const diff = (now - release) / (1000 * 60 * 60 * 24);
-              if (diff <= 5) {
+              if (diff >= 0 && diff <= 14) {
                 const badge = document.createElement('span');
                 badge.className = 'new-badge';
                 badge.textContent = 'NEW';
