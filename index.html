@@ -176,14 +176,15 @@
   </div>
 
   <script>
-    const categories = ['경제경영', '에세이', '건강취미', '컬러링북', '공예(뜨개)', '웹툰단행본'];
+    const categories = ['경제경영', '에세이', '건강취미', '컬러링북', '공예(뜨개)', '웹툰단행본', '예술'];
     const categoryMap = {
       '경제경영': 'economics_data',
       '에세이': 'essay_data',
       '건강취미': 'hobbyHealth_data',
       '컬러링북': 'coloringBooks_data',
       '공예(뜨개)': 'handicraft_data',
-      '웹툰단행본': 'webtoons_data'
+      '웹툰단행본': 'webtoons_data',
+      '예술': 'art_data'
     };
 
     function renderButtons(defaultCategory) {
@@ -298,6 +299,11 @@
         if (pub === 'kyobo') return '만화 > 웹툰/카툰에세이';
         if (pub === 'yes24') return '만화/라이트노벨 > 웹툰';
         return '웹툰';
+      } else if (category === '예술') {
+        if (pub === 'aladin') return '예술';
+        if (pub === 'kyobo') return '예술';
+        if (pub === 'yes24') return '예술';
+        return '예술';
       }
       return category;
     }

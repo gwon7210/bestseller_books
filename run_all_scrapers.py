@@ -12,6 +12,7 @@ aladin_categories = [
     ("coloringBooks", "114988"),
     ("handicraft", "53532"),
     ("webtoons", "7443"),
+    ("art", "74"),
 ]
 
 # --- 교보문고 카테고리 목록: (카테고리이름, clst_code) ---
@@ -22,6 +23,7 @@ kyobo_categories = [
     ("HomeLife", "H"),
     ("hobbies&sports", "R"),
     ("cooking", "a"),
+    ("art", "Q"),
 ]
 
 # --- 교보문고 카테고리별 베스트셀러 목록: (카테고리이름, clst_code) ---
@@ -40,6 +42,7 @@ yes24_categories = [
     ("coloringBooks", "001001007003011"),
     ("handicraft", "001001011016"),
     ("webtoons", "001001008020"),
+    ("art", "001001007"),
 ]
 
 # --- 영풍문고 카테고리 목록: (카테고리이름, categoryBestCd) ---
@@ -49,6 +52,7 @@ ypbooks_categories = [
     ("hobbyHealth", "A011"),
     ("health", "A021"),
     ("hobbies&leisure", "A022"),
+    ("art", "A012"),
 ]
 
 # --- 알라딘 실행 ---
