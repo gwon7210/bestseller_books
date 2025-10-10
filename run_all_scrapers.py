@@ -12,7 +12,7 @@ aladin_categories = [
     ("coloringBooks", "114988"),
     ("handicraft", "53532"),
     ("webtoons", "7443"),
-    ("art", "74"),
+    ("art", "517"),
 ]
 
 # --- 교보문고 카테고리 목록: (카테고리이름, clst_code) ---
