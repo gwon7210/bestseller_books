@@ -51,47 +51,47 @@ ypbooks_categories = [
     ("hobbies&leisure", "A022"),
 ]
 
-# # --- 알라딘 실행 ---
-# print("\n========== 🛒 알라딘 스크래핑 시작 ==========")
-# for category_name, category_id in aladin_categories:
-#     print(f"\n🚀 실행 중: {category_name} (CID={category_id})")
-#     try:
-#         subprocess.run(
-#             ["python", "scrapers/aladin_scraper.py", category_name, category_id],
-#             check=True,
-#         )
-#         print(f"✅ 완료: {category_name}")
-#     except subprocess.CalledProcessError as e:
-#         print(f"❌ 오류 발생: {category_name}")
-#         print(e)
+# --- 알라딘 실행 ---
+print("\n========== 🛒 알라딘 스크래핑 시작 ==========")
+for category_name, category_id in aladin_categories:
+    print(f"\n🚀 실행 중: {category_name} (CID={category_id})")
+    try:
+        subprocess.run(
+            ["python", "scrapers/aladin_scraper.py", category_name, category_id],
+            check=True,
+        )
+        print(f"✅ 완료: {category_name}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ 오류 발생: {category_name}")
+        print(e)
 
-# # --- 교보문고 실행 ---
-# print("\n========== 📚 교보문고 스크래핑 시작 ==========")
-# for category_name, clst_code in kyobo_categories:
-#     print(f"\n🚀 실행 중: {category_name} (코드={clst_code})")
-#     try:
-#         subprocess.run(
-#             ["python", "scrapers/kyobo_scraper.py", category_name, clst_code],
-#             check=True,
-#         )
-#         print(f"✅ 완료: {category_name}")
-#     except subprocess.CalledProcessError as e:
-#         print(f"❌ 오류 발생: {category_name}")
-#         print(e)
+# --- 교보문고 실행 ---
+print("\n========== 📚 교보문고 스크래핑 시작 ==========")
+for category_name, clst_code in kyobo_categories:
+    print(f"\n🚀 실행 중: {category_name} (코드={clst_code})")
+    try:
+        subprocess.run(
+            ["python", "scrapers/kyobo_scraper.py", category_name, clst_code],
+            check=True,
+        )
+        print(f"✅ 완료: {category_name}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ 오류 발생: {category_name}")
+        print(e)
 
-# # --- 교보문고 카테고리별 베스트셀러 실행 ---
-# print("\n========== 📚 교보문고 카테고리별 베스트셀러 스크래핑 시작 ==========")
-# for category_name, clst_code in kyobo_category_codes:
-#     print(f"\n🚀 실행 중: {category_name} (코드={clst_code})")
-#     try:
-#         subprocess.run(
-#             ["python", "scrapers/kyobo_category_scraper.py", category_name, clst_code],
-#             check=True,
-#         )
-#         print(f"✅ 완료: {category_name}")
-#     except subprocess.CalledProcessError as e:
-#         print(f"❌ 오류 발생: {category_name}")
-#         print(e)
+# --- 교보문고 카테고리별 베스트셀러 실행 ---
+print("\n========== 📚 교보문고 카테고리별 베스트셀러 스크래핑 시작 ==========")
+for category_name, clst_code in kyobo_category_codes:
+    print(f"\n🚀 실행 중: {category_name} (코드={clst_code})")
+    try:
+        subprocess.run(
+            ["python", "scrapers/kyobo_category_scraper.py", category_name, clst_code],
+            check=True,
+        )
+        print(f"✅ 완료: {category_name}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ 오류 발생: {category_name}")
+        print(e)
 
 # --- YES24 실행 ---
 print("\n========== 🧾 YES24 스크래핑 시작 ==========")
@@ -107,19 +107,19 @@ for category_name, category_number in yes24_categories:
         print(f"❌ 오류 발생: {category_name}")
         print(e)
 
-# # --- 영풍문고 실행 ---
-# print("\n========== 🟩 영풍문고 스크래핑 시작 ==========")
-# for category_name, category_code in ypbooks_categories:
-#     print(f"\n🚀 실행 중: {category_name} (categoryBestCd={category_code})")
-#     try:
-#         subprocess.run(
-#             ["python", "scrapers/ypbooks_scraper.py", category_name, category_code],
-#             check=True,
-#         )
-#         print(f"✅ 완료: {category_name}")
-#     except subprocess.CalledProcessError as e:
-#         print(f"❌ 오류 발생: {category_name}")
-#         print(e)
+# --- 영풍문고 실행 ---
+print("\n========== 🟩 영풍문고 스크래핑 시작 ==========")
+for category_name, category_code in ypbooks_categories:
+    print(f"\n🚀 실행 중: {category_name} (categoryBestCd={category_code})")
+    try:
+        subprocess.run(
+            ["python", "scrapers/ypbooks_scraper.py", category_name, category_code],
+            check=True,
+        )
+        print(f"✅ 완료: {category_name}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ 오류 발생: {category_name}")
+        print(e)
 
 
 # --- index.html 최근 업데이트 날짜 표시 ---
